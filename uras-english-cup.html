@@ -1,0 +1,998 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Uras English Cup</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800;900&display=swap">
+<style>
+/* Layout: sticker-album cards on a mown football pitch; player card + one mission at a time, big touch targets. Single deliberate bright theme. */
+:root{
+  --pitch:#2f9a57; --pitch-2:#2a8c4f; --ink:#132029; --paper:#ffffff; --paper-2:#eef7f0;
+  --sun:#ffc93c; --red:#ef4444; --sky:#3b82f6; --muted:#55665c; --ok:#16a34a; --no:#dc2626;
+  --display:"Lilita One","Arial Rounded MT Bold","Trebuchet MS",sans-serif;
+  --body:"Nunito","Segoe UI",system-ui,sans-serif;
+  --r:20px; --shadow:0 5px 0 var(--ink);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--body);font-weight:600;font-size:16px;color:var(--ink);min-height:100vh;
+  background:var(--pitch) repeating-linear-gradient(90deg,var(--pitch) 0 90px,var(--pitch-2) 90px 180px)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--ink)}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;letter-spacing:.01em}
+p{margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:4px solid var(--sky);outline-offset:3px}
+
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--ink);color:#fff}
+.topbar .in{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-size:22px;margin-right:auto}
+.brand svg{width:34px;height:34px}
+.pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border-radius:999px;padding:6px 12px;font-weight:900;font-variant-numeric:tabular-nums}
+.tbtn{background:var(--sun);color:var(--ink);border:2px solid #fff;border-radius:12px;padding:6px 12px;font-weight:900;cursor:pointer}
+.tbtn.alt{background:transparent;color:#fff}
+
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:22px 56px;display:grid;gap:24px}
+.card{background:var(--paper);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--shadow);padding:22px}
+.eyebrow{font-weight:900;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.btn{font-family:var(--display);font-size:22px;padding:14px 26px;border:3px solid var(--ink);border-radius:16px;background:var(--sun);color:var(--ink);box-shadow:0 5px 0 var(--ink);cursor:pointer;transition:transform .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:var(--paper)}
+.btn.small{font-size:17px;padding:9px 16px;box-shadow:0 3px 0 var(--ink)}
+.link{background:none;border:0;text-decoration:underline;color:var(--muted);cursor:pointer;font-weight:800}
+
+/* Hero: player card + mission */
+.hero{display:grid;grid-template-columns:250px 1fr;gap:20px;align-items:stretch}
+.pcard{background:var(--ink) repeating-linear-gradient(135deg,rgba(255,255,255,.05) 0 14px,transparent 14px 28px);color:#fff;border:3px solid var(--ink);border-radius:var(--r);box-shadow:0 5px 0 #0a1217;
+  padding:22px 18px 20px;display:grid;justify-items:center;align-content:start;gap:14px;text-align:center}
+.sticker{position:relative;width:180px;aspect-ratio:1;max-width:100%;transform:rotate(-4deg);margin-top:4px}
+.ph{width:100%;height:100%;border-radius:50%;overflow:hidden;border:8px solid #fff;box-shadow:0 0 0 4px var(--sun),0 7px 0 4px #0a1217;background:var(--paper-2)}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph-empty{width:100%;height:100%;display:grid;place-items:center;align-content:center;gap:4px;color:var(--ink);font-weight:900;cursor:pointer;font-size:15px;text-align:center;padding:10px}
+.ph-empty b{font-size:40px;font-weight:400;line-height:1}
+.pname{position:absolute;left:50%;bottom:-12px;transform:translateX(-50%) rotate(2deg);background:var(--red);color:#fff;font-family:var(--display);font-size:26px;padding:2px 18px;border:3px solid var(--ink);border-radius:10px;letter-spacing:.06em}
+.pnum{position:absolute;right:-4px;top:-4px;width:52px;height:52px;border-radius:50%;background:var(--sun);color:var(--ink);border:3px solid var(--ink);display:grid;place-items:center;font-family:var(--display);font-size:24px;transform:rotate(8deg)}
+.pinfo{display:grid;gap:4px;margin-top:10px;width:100%}
+.pinfo .eyebrow{color:#9fb3a7}
+.pinfo b{font-family:var(--display);font-weight:400;font-size:22px;color:var(--sun)}
+.pinfo small{color:#c9d6ce;font-weight:800}
+.pbar{height:10px;border-radius:6px;background:rgba(255,255,255,.15);overflow:hidden;margin-top:6px}
+.pbar i{display:block;height:100%;background:var(--sun)}
+
+.mission{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;align-items:center}
+.mission h1{font-size:clamp(28px,4.4vw,42px);line-height:1.05;margin-top:6px}
+.tasks{list-style:none;padding:0;margin:16px 0 14px;display:grid;gap:10px}
+.tasks li{display:flex;gap:12px;align-items:center;background:var(--paper-2);border-radius:14px;padding:10px 14px}
+.tasks .ic{font-size:28px;width:40px;text-align:center}
+.tasks b{display:block;font-weight:900}
+.tasks small{color:var(--muted);font-size:14px}
+.tasks li.done{opacity:.55}
+.tasks li.done b::after{content:" ✓";color:var(--ok)}
+.chunk{display:flex;gap:10px;align-items:center;border:3px dashed var(--ink);border-radius:14px;padding:10px 12px;margin-bottom:16px}
+.chunk b{font-family:var(--display);font-weight:400;font-size:20px;display:block}
+.chunk small{color:var(--muted);font-weight:800}
+.chunk .speak{flex:none}
+.reward{background:var(--ink);color:#fff;border-radius:18px;padding:18px;text-align:center;display:grid;gap:6px}
+.reward svg{width:100%;max-width:220px;margin:0 auto;height:auto}
+.reward .nm{font-family:var(--display);font-size:22px;color:var(--sun)}
+.reward .eyebrow{color:#c9d6ce}
+.meta{display:flex;gap:14px;flex-wrap:wrap;align-items:center;color:var(--muted);font-weight:800}
+
+/* Weeks roadmap */
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;color:#fff;flex-wrap:wrap}
+.sec-h h2{font-size:26px;text-shadow:0 3px 0 var(--ink)}
+.sec-h p{font-weight:800;opacity:.92}
+.levels{display:grid;gap:16px;margin-top:12px}
+.lvl-h{display:flex;gap:10px;align-items:baseline;color:#fff;flex-wrap:wrap}
+.lvl-h b{font-family:var(--display);font-weight:400;font-size:20px;background:var(--ink);padding:2px 12px;border-radius:10px}
+.lvl-h span{font-weight:800}
+.weeks{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:8px}
+.wtab{background:var(--paper);border:3px solid var(--ink);border-radius:16px;padding:12px;text-align:left;cursor:pointer;display:grid;gap:4px;box-shadow:0 4px 0 var(--ink);min-width:0}
+.wtab.on{background:var(--sun)}
+.wtab:disabled{cursor:not-allowed;background:#dfe7e2;color:var(--muted);box-shadow:0 4px 0 #8a9a90;border-color:#8a9a90}
+.wnum{font-size:12px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}
+.wname{font-family:var(--display);font-size:19px;line-height:1.1}
+.wbar{height:8px;background:rgba(19,32,41,.15);border-radius:6px;overflow:hidden}
+.wbar i{display:block;height:100%;background:var(--ok)}
+
+/* Fixtures */
+.fixtures{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.fx{background:var(--paper);border:3px solid var(--ink);border-radius:18px;padding:14px;display:grid;gap:8px;align-content:start;box-shadow:0 4px 0 var(--ink)}
+.fx h3{font-size:20px}
+.fx .ti{font-size:14px;color:var(--muted);display:grid;gap:2px}
+.fx .st{font-weight:900;font-size:13px;border-radius:999px;padding:3px 10px;justify-self:start}
+.fx.done .st{background:#dcfce7;color:#166534}
+.fx.cur{background:var(--sun);animation:pulse 1.6s ease-in-out infinite}
+.fx.cur .st{background:var(--ink);color:#fff}
+.fx.lock{background:#dfe7e2;color:var(--muted);box-shadow:0 4px 0 #8a9a90;border-color:#8a9a90}
+.fx.lock .st{background:#fff}
+.fx.open .st{background:#e0ecff;color:#1d4ed8}
+.fx button{justify-self:start}
+@keyframes pulse{50%{transform:translateY(-4px)}}
+
+/* Word wall */
+.wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+.wcard{background:var(--paper);border:3px solid var(--ink);border-radius:16px;padding:10px;display:grid;gap:4px;justify-items:center;align-content:start;cursor:pointer;box-shadow:0 3px 0 var(--ink);text-align:center}
+.wcard .pic{height:70px}
+.wcard .pic svg{width:90px}
+.wcard .pic.emo{font-size:46px}
+.wcard .count{font-size:13px;max-width:90px}
+.wcard b{font-family:var(--display);font-size:20px;font-weight:400}
+.wcard small{color:var(--muted)}
+.wcard em{font-style:normal;font-size:13px;color:var(--ink);background:var(--paper-2);border-radius:8px;padding:3px 6px}
+
+/* Pictures */
+.pic{display:grid;place-items:center;width:100%;line-height:1}
+.pic svg{width:min(140px,85%);height:auto;display:block}
+.pic.emo{font-size:clamp(46px,11vw,70px)}
+.count{display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:2px;max-width:160px;margin:0 auto;font-size:26px}
+.count i{font-style:normal}
+.count[data-n="1"],.count[data-n="2"],.count[data-n="3"]{font-size:42px}
+
+/* Play overlay */
+.overlay{position:fixed;inset:0;z-index:50;overflow-y:auto;background:var(--pitch) repeating-linear-gradient(90deg,var(--pitch) 0 90px,var(--pitch-2) 90px 180px)}
+.play-in{max-width:780px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:calc(env(safe-area-inset-top,0px) + 14px) calc(env(safe-area-inset-bottom,0px) + 28px);display:grid;gap:14px}
+.phead{display:flex;align-items:center;gap:12px;color:#fff;flex-wrap:wrap}
+.phead h2{font-size:22px;text-shadow:0 2px 0 var(--ink)}
+.prog{flex:1 1 200px;display:flex;gap:6px}
+.prog i{flex:1;height:16px;border-radius:9px;background:rgba(255,255,255,.35);border:2px solid var(--ink)}
+.prog i.f{background:var(--sun)}
+.xbtn{background:var(--paper);color:var(--ink);border:3px solid var(--ink);border-radius:12px;padding:6px 12px;font-weight:900;cursor:pointer}
+#stage{background:var(--paper);border:3px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);padding:22px;display:grid;gap:18px}
+.hint{font-weight:800;font-size:18px}
+.center{text-align:center}
+.q{display:grid;justify-items:center;gap:10px;text-align:center}
+.speak{background:var(--sky);color:#fff;border:3px solid var(--ink);border-radius:14px;padding:8px 16px;font-weight:900;cursor:pointer;box-shadow:0 3px 0 var(--ink)}
+.speak.big{font-size:44px;width:110px;height:110px;border-radius:50%;padding:0}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:14px}
+.opt{background:var(--paper-2);border:3px solid var(--ink);border-radius:18px;padding:16px 8px;min-height:130px;cursor:pointer;display:grid;place-items:center;box-shadow:0 4px 0 var(--ink)}
+.opt.word{min-height:76px;font-family:var(--display);font-size:clamp(22px,5vw,32px)}
+.opt.ok{background:#bbf7d0;border-color:var(--ok)}
+.opt.no,.tile.no{animation:shake .4s;background:#fee2e2}
+@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.fb{min-height:34px;text-align:center;font-size:22px;font-weight:800;opacity:0;transition:opacity .2s;display:grid;gap:2px}
+.fb.show{opacity:1}
+.fb b{font-family:var(--display);font-weight:400;color:var(--ok)}
+.fb small{font-size:17px;color:var(--muted)}
+.qrow{display:flex;gap:18px;align-items:center;justify-content:center;flex-wrap:wrap;text-align:center}
+.qrow > div{display:grid;gap:8px;justify-items:center}
+.qpic{width:170px;height:130px;background:var(--paper-2);border-radius:18px;border:3px solid var(--ink);display:grid;place-items:center}
+
+/* Penalty */
+.pen{position:relative;height:210px;border-radius:18px;border:3px solid var(--ink);overflow:hidden;background:var(--pitch) repeating-linear-gradient(90deg,var(--pitch) 0 50px,var(--pitch-2) 50px 100px)}
+.goal{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:min(330px,82%);height:104px;border:7px solid #fff;border-bottom:0;border-radius:4px 4px 0 0;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.35) 0 2px,transparent 2px 14px),repeating-linear-gradient(90deg,rgba(255,255,255,.35) 0 2px,transparent 2px 14px)}
+.keeper{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:52px;transition:transform .35s ease-out}
+.keeper svg{width:100%;height:auto;display:block}
+.ball{position:absolute;bottom:12px;left:50%;font-size:40px;transform:translate(-50%,0);transition:transform .55s cubic-bezier(.2,.7,.3,1)}
+.spot{position:absolute;bottom:6px;left:50%;width:70px;height:10px;transform:translateX(-50%);border-radius:50%;background:rgba(255,255,255,.4)}
+.score{position:absolute;right:10px;bottom:10px;background:var(--ink);color:#fff;border-radius:10px;padding:4px 10px;font-weight:900}
+.golt{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-size:64px;color:var(--sun);-webkit-text-stroke:3px var(--ink);pointer-events:none;opacity:0}
+.golt.on{animation:gol 1.2s ease-out}
+@keyframes gol{0%{opacity:0;transform:scale(.4)}25%{opacity:1;transform:scale(1.15)}80%{opacity:1;transform:scale(1)}100%{opacity:0}}
+
+/* Race */
+.road{position:relative;height:96px;border-radius:16px;border:3px solid var(--ink);background:#3a4452;overflow:hidden}
+.lane{position:absolute;left:0;right:0;top:50%;height:6px;transform:translateY(-50%);background:repeating-linear-gradient(90deg,#fff 0 26px,transparent 26px 50px);opacity:.7}
+.finish{position:absolute;right:0;top:0;bottom:0;width:26px;background:conic-gradient(#fff 25%,#132029 0 50%,#fff 0 75%,#132029 0) 0 0/13px 13px}
+.racer{position:absolute;bottom:14px;width:96px;transition:left .45s ease-out}
+.racer svg{width:100%;height:auto;display:block}
+.slots{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.slot{width:48px;height:62px;border-bottom:5px solid var(--ink);display:grid;place-items:center;font-family:var(--display);font-size:36px}
+.slot em{font-style:normal;color:#c5d3ca}
+.slot.filled{color:var(--ok)}
+.tiles{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.tile{width:60px;height:60px;border:3px solid var(--ink);border-radius:14px;background:var(--sun);font-family:var(--display);font-size:32px;cursor:pointer;box-shadow:0 4px 0 var(--ink)}
+.tile:disabled{opacity:.2;cursor:default}
+
+/* Memory */
+.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.mcard{aspect-ratio:3/4;max-width:100%;border:3px solid var(--ink);border-radius:16px;cursor:pointer;display:grid;place-items:center;padding:6px;box-shadow:0 4px 0 var(--ink);
+  background:var(--sky) repeating-linear-gradient(45deg,rgba(255,255,255,.12) 0 8px,transparent 8px 16px)}
+.mem.many .mcard{aspect-ratio:1}
+.mcard .back{font-family:var(--display);font-size:40px;color:#fff;-webkit-text-stroke:2px var(--ink)}
+.mcard:not(.up) .face{display:none}
+.mcard.up{background:var(--paper)}
+.mcard.up .back{display:none}
+.mcard.match{background:#bbf7d0;border-color:var(--ok)}
+.mcard .face{width:100%}
+.mcard .face b{font-family:var(--display);font-weight:400;font-size:clamp(16px,4.2vw,28px);word-break:break-word}
+.mcard .pic svg{width:90%}
+.mcard .pic.emo{font-size:clamp(30px,8vw,52px)}
+.mcard .count{font-size:clamp(11px,2.6vw,18px);max-width:100%}
+
+/* Fill the Gap (writing) */
+.gapword{display:inline-flex;gap:6px;vertical-align:middle;flex-wrap:wrap;justify-content:center}
+.gapword.big{display:flex;margin:0 auto}
+.gapfix,.gapbox{width:48px;height:58px;border:3px solid var(--ink);border-radius:12px;font-family:var(--display);font-size:32px;text-align:center;display:inline-grid;place-items:center;background:var(--paper-2);color:var(--ink);padding:0;line-height:1}
+.gapbox{background:#fff;border-style:dashed;box-shadow:0 3px 0 var(--ink);font-family:var(--display)}
+.gapbox:focus{outline:4px solid var(--sun);outline-offset:2px}
+.gapbox.ok{border-style:solid;background:#bbf7d0;color:var(--ok)}
+.gapbox.no{animation:shake .4s;background:#fee2e2}
+.gapsent{font-size:clamp(22px,4.5vw,30px);font-weight:800;text-align:center;line-height:2.6}
+
+/* Typing Turbo */
+.typing-card{display:grid;grid-template-columns:1fr auto auto;gap:18px;align-items:center}
+.typing-card h2{font-size:32px;margin-top:2px}
+.typing-card .meta{margin-top:6px}
+.lvl-badge{background:var(--ink);color:var(--sun);font-family:var(--display);font-size:22px;padding:6px 14px;border-radius:12px;display:inline-block}
+.tt-badges{display:grid;gap:4px;justify-items:center;color:var(--muted);font-weight:800}
+.tt-top{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap}
+.tt-count{font-weight:900}
+.tt-pic{height:90px;display:grid;place-items:center}
+.tt-pic .pic svg{width:120px}
+.tt-pic .pic.emo{font-size:64px}
+.tt-pic .count{font-size:22px}
+.tt-word{display:flex;flex-wrap:wrap;justify-content:center;font-family:var(--display);font-size:clamp(36px,9vw,68px);gap:2px;min-height:1.2em}
+.tt-word span{padding:0 2px;border-bottom:5px solid transparent;color:#9fb0a6}
+.tt-word span.d{color:var(--ok)}
+.tt-word span.c{color:var(--ink);border-bottom-color:var(--sun)}
+.tt-word span.x{animation:shake .35s;color:var(--no)}
+.tt-word span.sp{min-width:.5em}
+.kb{display:grid;gap:6px;max-width:620px;margin:0 auto;width:100%}
+.kb-row{display:flex;gap:5px;justify-content:center}
+.key{flex:1 1 0;max-width:54px;min-width:0;height:52px;border:2px solid var(--ink);border-radius:10px;background:var(--paper-2);font-family:var(--display);font-size:22px;cursor:pointer;box-shadow:0 3px 0 var(--ink);padding:0}
+.key:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.key.space{max-width:320px;flex:6 1 0;font-family:var(--body);font-weight:900;font-size:16px}
+@media (max-width:640px){
+  .typing-card{grid-template-columns:1fr}
+  .gapfix,.gapbox{width:40px;height:50px;font-size:27px}
+  .key{height:46px;font-size:19px}
+}
+
+/* Break + result */
+.brk,.res{display:grid;justify-items:center;text-align:center;gap:12px;padding-block:8px}
+.brk h2,.res h2{font-size:clamp(28px,6vw,40px)}
+.brk p,.res p{font-size:18px;font-weight:800}
+.brk-ico{font-size:72px;line-height:1}
+.ring{position:relative;width:110px;height:110px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:10}
+.ring .trk{stroke:#e2ebe5}
+.ring .bar{stroke:var(--ok);stroke-dasharray:276.5;stroke-dashoffset:276.5;transition:stroke-dashoffset 1s linear;stroke-linecap:round}
+.ring span{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-size:38px}
+.stars{font-size:56px;letter-spacing:6px}
+.prize{width:min(280px,90%);background:var(--ink);border-radius:20px;padding:18px}
+.prize svg{width:100%;height:auto}
+.carname{font-family:var(--display);font-size:28px !important;color:var(--ink)}
+.row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:center}
+
+/* Sheets */
+.sheet{position:fixed;inset:0;z-index:60;background:rgba(19,32,41,.7);overflow-y:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:calc(env(safe-area-inset-top,0px) + 24px) calc(env(safe-area-inset-bottom,0px) + 24px)}
+.sheet-in{max-width:780px;margin:0 auto;background:var(--paper);border:3px solid var(--ink);border-radius:24px;padding:22px;display:grid;gap:18px}
+.sheet-h{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.sheet-h h2{font-size:28px}
+.sheet h3{font-size:22px;margin-bottom:8px}
+.garage{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.slotcar{background:var(--paper-2);border-radius:14px;border:3px solid var(--ink);padding:8px;text-align:center;display:grid;gap:2px}
+.slotcar svg{width:100%;height:auto}
+.slotcar.lock{opacity:.5;border-style:dashed}
+.slotcar b{font-weight:900;font-size:13px}
+.cups{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.cup{border:3px solid var(--ink);border-radius:14px;padding:8px;text-align:center;font-weight:900;background:var(--paper-2);font-size:13px}
+.cup span{font-size:30px;display:block;filter:grayscale(1);opacity:.35}
+.cup.won{background:var(--sun)}
+.cup.won span{filter:none;opacity:1}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{background:var(--paper-2);border-radius:14px;padding:12px}
+.stat b{display:block;font-family:var(--display);font-weight:400;font-size:30px;font-variant-numeric:tabular-nums}
+.stat small{color:var(--muted);font-weight:800}
+.field{display:grid;gap:6px;font-weight:900}
+.field select,.field input:not([type=range]){font:inherit;padding:10px;border:3px solid var(--ink);border-radius:12px;background:#fff;color:var(--ink)}
+.field input[type=range]{width:100%;accent-color:var(--ok)}
+.check{display:flex;gap:10px;align-items:center;font-weight:800}
+.check input{width:24px;height:24px}
+.mlist{display:grid;gap:8px;padding:0;margin:0;list-style:none}
+.mlist li{display:flex;gap:10px;align-items:center;background:var(--paper-2);border-radius:12px;padding:8px 12px;flex-wrap:wrap}
+.mlist li span{margin-left:auto;font-weight:900;color:var(--no);font-variant-numeric:tabular-nums}
+.tablewrap{overflow-x:auto;border:3px solid var(--ink);border-radius:14px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid #d5e2da;vertical-align:top}
+th{background:var(--paper-2);font-weight:900}
+tr.cur td{background:#fff6d6}
+.photo-edit{display:grid;grid-template-columns:140px 1fr;gap:16px;align-items:center}
+.photo-edit .sticker{width:130px;transform:none}
+.tips{margin:0;padding-left:20px;display:grid;gap:6px;max-width:65ch}
+.note{font-size:14px;color:var(--muted)}
+.danger{background:#fee2e2}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:80;overflow:hidden}
+.confetti i{position:absolute;top:-20px;width:12px;height:18px;border-radius:3px;animation:fall 1.4s ease-in forwards}
+@keyframes fall{to{transform:translate(var(--x),110vh) rotate(var(--r))}}
+
+@media (max-width:900px){
+  .fixtures{grid-template-columns:1fr 1fr}
+  .weeks{grid-template-columns:1fr 1fr}
+  .hero{grid-template-columns:1fr}
+  .pcard{grid-template-columns:150px 1fr;justify-items:start;text-align:left;align-items:center}
+  .pcard .sticker{width:140px}
+  .pinfo{margin-top:0}
+}
+@media (max-width:640px){
+  .mission{grid-template-columns:1fr}
+  .fixtures{grid-template-columns:1fr}
+  .fx{grid-template-columns:1fr auto;align-items:center}
+  .fx .ti{grid-column:1}
+  .fx button,.fx > span[aria-hidden]{grid-column:2;grid-row:1 / span 3;align-self:center}
+  .fx .st{display:none}
+  .brand{font-size:19px}
+  .mem{gap:8px}
+  .speak.big{width:92px;height:92px;font-size:38px}
+  .pcard{grid-template-columns:118px 1fr;gap:12px;padding:16px 14px}
+  .pcard .sticker{width:110px}
+  .pname{font-size:18px;padding:1px 10px}
+  .pnum{width:38px;height:38px;font-size:18px}
+  .photo-edit{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none !important;transition:none !important}
+}
+</style>
+
+<header class="topbar">
+  <div class="in">
+    <div class="brand">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="#fff" stroke="#ffc93c" stroke-width="3"/><polygon points="20,11 28,17 25,27 15,27 12,17" fill="#132029"/></svg>
+      Uras English Cup
+    </div>
+    <span class="pill" title="Day streak">🔥 <span id="st-streak">0</span> days</span>
+    <span class="pill" title="Stars">⭐ <span id="st-stars">0</span></span>
+    <button class="tbtn" id="open-garage">🚗 Garage <span id="st-cars">0/60</span></button>
+    <button class="tbtn alt" id="open-parent">Parents</button>
+  </div>
+</header>
+
+<input type="file" id="photo-in" accept="image/*" class="vh" tabindex="-1" aria-hidden="true">
+
+<main class="wrap">
+  <div class="hero">
+    <aside class="pcard" id="pcard" aria-label="Uras'ın oyuncu kartı"></aside>
+    <section class="card mission" id="mission" aria-live="polite"></section>
+  </div>
+
+  <section>
+    <div class="sec-h"><h2>Season Roadmap</h2><p>12 weeks · easy to hard · Grade 1 &amp; 2 topics</p></div>
+    <div class="levels" id="levels"></div>
+  </section>
+
+  <section>
+    <div class="sec-h"><h2 id="fx-title">This Week's Matches</h2><p>1 match a day · 2 tasks · about 10 minutes</p></div>
+    <div class="fixtures" id="fixtures" style="margin-top:12px"></div>
+  </section>
+
+  <section class="card typing-card" id="typing-card"></section>
+
+  <section>
+    <div class="sec-h"><h2>Word Wall</h2><p>Tap a card to hear the word and the sentence</p></div>
+    <div class="wall" id="wall" style="margin-top:12px"></div>
+  </section>
+</main>
+
+<div class="overlay" id="play" hidden>
+  <div class="play-in">
+    <div class="phead">
+      <button class="xbtn" id="play-close">✕ Exit</button>
+      <h2 id="play-title">Görev</h2>
+      <div class="prog" id="prog"></div>
+    </div>
+    <div id="stage"></div>
+  </div>
+</div>
+
+<div class="sheet" id="sheet" hidden><div class="sheet-in" id="sheet-in"></div></div>
+
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s);
+document.documentElement.lang='en';
+const KEY='urasEnglishCup.v2';
+
+/* ---------- Curriculum ----------
+   Level 1-2: MEB Özel İlkokul 1. Sınıf İngilizce programı temaları (Hello!, My Classroom, Colours, Math, Toys, Animals, Senses...)
+   Level 3: MEB 2. Sınıf İngilizce (Türkiye Yüzyılı Maarif Modeli) temaları (Classroom/Personal/Family Life, Homes, Food). */
+const LEVELS=[
+ {n:1,name:'Warm-up',sub:'Grade 1 basics',opts:3,rounds:5,ghost:2,pairs:4,prompt:'word',hint:'Dinle ve doğru resme dokun'},
+ {n:2,name:'League Matches',sub:'From Grade 1 to Grade 2',opts:3,rounds:5,ghost:1,pairs:4,prompt:'find',hint:'Dinle: "Find the ..." ve resmi bul'},
+ {n:3,name:'Championship',sub:'Grade 2 topics',opts:4,rounds:6,ghost:0,pairs:6,prompt:'sentence',hint:'Cümleyi dinle, içindeki kelimenin resmine dokun'}
+];
+const W=(en,tr,p,ex)=>({en,tr,p:typeof p==='string'?{e:p}:p,ex});
+const WEEKS=[
+ {n:1,lv:1,tr:'Merhaba!',en:'Hello!',src:'1. sınıf: Hello! · 2. sınıf: School Life',chunk:"Hello! I'm Uras. What's your name?",chunkTr:'Merhaba! Ben Uras. Senin adın ne?',noFind:true,words:[
+  W('hello','merhaba','👋',"Hello! I'm Uras."),W('boy','erkek çocuk','👦','Uras is a boy.'),W('girl','kız çocuk','👧','She is a girl.'),W('friend','arkadaş','🤝','My friend likes football.'),
+  W('teacher','öğretmen','🧑‍🏫','This is my teacher.'),W('school','okul','🏫','I go to school.'),W('yes','evet','👍','Yes, I like cars!'),W('no','hayır','👎','No, thank you.')]},
+ {n:2,lv:1,tr:'Renkler',en:'Colours',src:'1. sınıf: Colours · 2. sınıf: Classroom Life',chunk:"What colour is it? It's red.",chunkTr:'Ne renk? Kırmızı.',words:[
+  W('red','kırmızı',{car:'#e63946'},'The red car is fast.'),W('blue','mavi',{car:'#2f6fed'},'I have a blue car.'),W('green','yeşil',{car:'#2a9d4b'},'The green car wins!'),W('yellow','sarı',{car:'#ffd23f'},'Yellow car, go go go!'),
+  W('black','siyah',{car:'#1f2329'},'The black car is cool.'),W('white','beyaz',{car:'#ffffff'},'White car, stop!'),W('orange','turuncu',{car:'#ff8c1a'},'My school shirt is orange.'),W('pink','pembe',{car:'#ff6fae'},'The pink car is funny.')]},
+ {n:3,lv:1,tr:'Sayılar 1–10',en:'Numbers 1–10',src:'1. sınıf: Math · 2. sınıf: Classroom Life (1–20)',chunk:'How many balls? Five balls.',chunkTr:'Kaç top? Beş top.',noFind:true,words:
+  [['one','bir','I have one ball.'],['two','iki','Two goals for Uras!'],['three','üç','Three red cars.'],['four','dört','A car has four wheels.'],['five','beş','Five players.'],
+   ['six','altı','Six balls in the bag.'],['seven','yedi',"I'm seven!"],['eight','sekiz','Eight cars in a race.'],['nine','dokuz','Number nine scores!'],['ten','on','Ten points! Great!']].map((x,i)=>W(x[0],x[1],{count:i+1},x[2]))},
+ {n:4,lv:1,tr:'Sınıfım',en:'My Classroom',src:'1. sınıf: My Classroom · 2. sınıf: Classroom Life',chunk:"What's this? It's a pencil.",chunkTr:'Bu ne? Bu bir kalem.',words:[
+  W('book','kitap','📘','Open your book.'),W('pencil','kurşun kalem','✏️','My pencil is red.'),W('bag','çanta','🎒','My ball is in my bag.'),W('chair','sandalye','🪑','Sit on your chair.'),
+  W('ruler','cetvel','📏','A long ruler.'),W('scissors','makas','✂️','Scissors cut paper.'),W('notebook','defter','📓','Draw a car in your notebook.'),W('crayon','boya kalemi','🖍️','A green crayon.')]},
+ {n:5,lv:2,tr:'Oyuncaklar & Oyunlar',en:'Toys & Games',src:'1. sınıf: Toys, Hobbies',chunk:"I've got a ball. I like games!",chunkTr:'Bir topum var. Oyunları severim!',words:[
+  W('ball','top','⚽','Kick the ball!'),W('car','araba','🚗','My car is fast.'),W('bike','bisiklet','🚲','I ride my bike.'),W('train','tren','🚂','The train is long.'),
+  W('robot','robot','🤖','The robot can dance.'),W('kite','uçurtma','🪁','Fly the kite!'),W('teddy','oyuncak ayı','🧸','A brown teddy.'),W('game','oyun','🎮',"Let's play a game!")]},
+ {n:6,lv:2,tr:'Hayvanlar',en:'Animals',src:'1. sınıf: Animals · 2. sınıf: Homes (pets)',chunk:"I've got a dog. It's a lion!",chunkTr:'Bir köpeğim var. Bu bir aslan!',words:[
+  W('cat','kedi','🐱','The cat is sleeping.'),W('dog','köpek','🐶','My dog can run fast.'),W('bird','kuş','🐦','The bird can fly.'),W('fish','balık','🐟','A fish can swim.'),
+  W('rabbit','tavşan','🐰','The rabbit can jump.'),W('lion','aslan','🦁','The lion is big.'),W('monkey','maymun','🐵','The monkey is funny.'),W('horse','at','🐴','The horse is fast.')]},
+ {n:7,lv:2,tr:'Vücudum',en:'My Body',src:'1. sınıf: Senses · 2. sınıf: Personal Life',chunk:"I've got two eyes and two ears.",chunkTr:'İki gözüm ve iki kulağım var.',words:[
+  W('eye','göz','👁️','Look with your eyes!'),W('ear','kulak','👂','Listen with your ears.'),W('nose','burun','👃','Touch your nose.'),W('mouth','ağız','👄','Open your mouth.'),
+  W('hand','el','✋','Goalkeepers use their hands.'),W('arm','kol','💪','Strong arms!'),W('leg','bacak','🦵','Kick with your leg.'),W('foot','ayak','🦶','Score with your foot!')]},
+ {n:8,lv:2,tr:'Oyun Kolu Hareketleri',en:'Game Moves',src:'2. sınıf: Classroom Life (yönergeler)',chunk:'Go left! Go right! Jump!',chunkTr:'Sola git! Sağa git! Zıpla!',noFind:true,words:[
+  W('up','yukarı',{dpad:'up'},'Press up!'),W('down','aşağı',{dpad:'down'},'Go down!'),W('left','sol',{dpad:'left'},'Turn left!'),W('right','sağ',{dpad:'right'},'Turn right!'),
+  W('run','koş','🏃','Run to the ball!'),W('jump','zıpla','🦘','Jump high!'),W('stop','dur','🛑','Stop the car!'),W('go','git / başla','🟢','Ready, set, go!')]},
+ {n:9,lv:3,tr:'Yiyecekler',en:'Food',src:'1. sınıf: Fruits & Vegetables · 2. sınıf: Life in the City (food)',chunk:'Do you like apples? Yes, I do!',chunkTr:'Elma sever misin? Evet, severim!',words:[
+  W('apple','elma','🍎','I like apples.'),W('banana','muz','🍌','Monkeys like bananas.'),W('strawberry','çilek','🍓','Strawberries are red.'),W('carrot','havuç','🥕','Rabbits like carrots.'),
+  W('milk','süt','🥛','I drink milk.'),W('water','su','💧','Water after football!'),W('bread','ekmek','🍞','Bread for breakfast.'),W('egg','yumurta','🥚','An egg is white.')]},
+ {n:10,lv:3,tr:'Ailem',en:'My Family',src:'1. sınıf: Family · 2. sınıf: Family Life',chunk:'This is my father. He is tall.',chunkTr:'Bu benim babam. O uzun boylu.',words:[
+  W('mother','anne','👩','This is my mother.'),W('father','baba','👨','My father likes football.'),W('sister','kız kardeş','👧','My sister is nice.'),W('brother','erkek kardeş','👦','My brother plays games.'),
+  W('baby','bebek','👶','The baby is small.'),W('grandma','büyükanne','👵','Grandma makes cake.'),W('grandpa','büyükbaba','👴','Grandpa has a car.'),W('family','aile','👨‍👩‍👦','I love my family.')]},
+ {n:11,lv:3,tr:'Evim',en:'My Home',src:'1. sınıf: Home · 2. sınıf: Homes & Houses',chunk:"Where is the ball? It's in the garden.",chunkTr:'Top nerede? Bahçede.',words:[
+  W('house','ev','🏠','This is my house.'),W('bedroom','yatak odası','🛏️','My bed is in my bedroom.'),W('kitchen','mutfak','🍳','Mum is in the kitchen.'),W('bathroom','banyo','🛁','The bathroom is clean.'),
+  W('sofa','kanepe','🛋️','I play games on the sofa.'),W('door','kapı','🚪','Open the door.'),W('window','pencere','🪟','Look out of the window.'),W('garden','bahçe','🌳','The ball is in the garden.')]},
+ {n:12,lv:3,tr:'Kıyafet & Hava',en:'Clothes & Weather',src:'2. sınıf: Personal Life',chunk:"How's the weather? It's sunny!",chunkTr:'Hava nasıl? Güneşli!',words:[
+  W('shirt','tişört / gömlek','👕',"I've got a red shirt."),W('shoes','ayakkabı','👟','My football shoes are new.'),W('hat','şapka','🧢','A blue hat.'),W('coat','mont','🧥','Wear your coat.'),
+  W('sunny','güneşli','☀️',"It's sunny. Let's play!"),W('rainy','yağmurlu','🌧️',"It's rainy. Play at home."),W('snowy','karlı','❄️',"It's snowy!"),W('cold','soğuk','🥶',"It's cold today.")]}
+];
+const NW=WEEKS.length, ND=5;
+const TASKS={
+ listen:{name:'Listen & Find',ic:'🎧',desc:'Dinle, doğru resme dokun.'},
+ penalty:{name:'Penalty Shoot-out',ic:'⚽',desc:'Resme bak, kelimeyi seç, golü at!'},
+ race:{name:'Letter Race',ic:'🏁',desc:'Harfleri sırayla seç, araban yarışsın.'},
+ memory:{name:'Memory Garage',ic:'🃏',desc:'Resim ile kelimeyi eşleştir.'},
+ write:{name:'Fill the Gap',ic:'✍️',desc:'Boşluğu doldur: eksik harfleri yaz.'}
+};
+/* 5 maç x 2 görev = haftada 10 görev */
+const PLAN=[
+ [{t:'listen',part:'a'},{t:'memory',part:'a'}],
+ [{t:'listen',part:'b'},{t:'write',part:'a'}],
+ [{t:'penalty',part:'all'},{t:'race',part:'a'}],
+ [{t:'memory',part:'b'},{t:'write',part:'b'}],
+ [{t:'listen',part:'all',hard:true},{t:'penalty',part:'all',hard:true}]
+];
+const BASECARS=[['Red Rocket','#e63946'],['Blue Bolt','#2f6fed'],['Green Gecko','#2a9d4b'],['Yellow Flash','#ffd23f'],['Orange Tiger','#ff8c1a'],
+ ['Purple Storm','#8e44ad'],['Black Shadow','#1f2329'],['White Ghost','#f4f4f4'],['Pink Turbo','#ff6fae'],['Silver Wolf','#aeb6bf'],
+ ['Gold Champion','#e0b13a'],['Sky Jet','#4cc9f0'],['Lime Racer','#a3e635'],['Brown Bear','#8d5a3b'],['Navy Captain','#1d3557'],
+ ['Mint Drift','#64dfdf'],['Ruby Star','#b5172f'],['Sunset Racer','#ff7b54'],['Ice Blue','#bde0fe'],['Grand Final','#14b8a6']];
+const NCARS=NW*ND;
+const carAt=i=>{const b=BASECARS[i%20],v=Math.floor(i/20)%3;return {name:b[0]+['',' Turbo',' GT'][v],color:b[1],v}};
+const BREAKS=[
+ {en:'Jump! Jump! Jump!',tr:'Ayağa kalk ve 5 kere zıpla!',ic:'🦘'},
+ {en:'Run, run, run!',tr:'Olduğun yerde koş!',ic:'🏃'},
+ {en:'Kick the ball!',tr:'Hayali topa 5 kere şut çek!',ic:'⚽'},
+ {en:'Turn left! Turn right!',tr:'Direksiyonu tut: sola dön, sağa dön!',ic:'🏎️'},
+ {en:'Hands up! Hands down!',tr:'Kollarını kaldır, indir. 5 kere!',ic:'🙌'},
+ {en:'Touch your nose! Touch your toes!',tr:'Burnuna dokun, ayak parmaklarına dokun!',ic:'👃'}
+];
+
+/* ---------- State ---------- */
+const DEF={assigned:1,done:{},dayDone:{},stars:0,mistakes:{},secs:{},lock:true,rate:0.8,sfx:true,photo:null,ph:{x:47,y:38,z:1.7},openAll:true};
+let S;
+try{S=Object.assign({},DEF,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){S=Object.assign({},DEF)}
+if(!S.ph)S.ph=Object.assign({},DEF.ph);
+if(!S.typing)S.typing={level:1,best:1};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));return true}catch(e){return false}}
+function fmt(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+const today=()=>fmt(new Date());
+const tk=(w,d,t)=>`w${w}d${d}t${t}`;
+const dk=(w,d)=>`w${w}d${d}`;
+const lvOf=w=>LEVELS[WEEKS[w-1].lv-1];
+const dayComplete=(w,d)=>PLAN[d].every((_,t)=>S.done[tk(w,d,t)]);
+const dayStarted=(w,d)=>PLAN[d].some((_,t)=>S.done[tk(w,d,t)]);
+const weekComplete=w=>PLAN.every((_,d)=>dayComplete(w,d));
+const weekOpen=()=>true; /* all 12 weeks are open */
+function completedDays(){let n=0;WEEKS.forEach(x=>PLAN.forEach((_,d)=>{if(dayComplete(x.n,d))n++}));return n}
+function tasksDone(){return Object.keys(S.done).length}
+function nextDay(w){for(let d=0;d<ND;d++)if(!dayComplete(w,d))return d;return -1}
+function doneTodayElsewhere(){return Object.values(S.dayDone).includes(today())}
+function waitsTomorrow(w,d){return !S.openAll&&S.lock&&!dayStarted(w,d)&&doneTodayElsewhere()}
+function streak(){
+ const set=new Set(Object.values(S.dayDone));let c=0;const d=new Date();
+ if(!set.has(fmt(d)))d.setDate(d.getDate()-1);
+ for(let g=0;g<400;g++){const wd=d.getDay();if(set.has(fmt(d)))c++;else if(wd!==0&&wd!==6)break;d.setDate(d.getDate()-1)}
+ return c;
+}
+function defaultView(){for(const x of WEEKS)if(weekOpen(x.n)&&!weekComplete(x.n))return x.n;return Math.min(S.assigned,NW)}
+let view=defaultView();
+
+/* ---------- Helpers ---------- */
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function sample(a,n){return shuffle(a).slice(0,n)}
+function fillTo(a,n){let out=[];while(out.length<n)out=out.concat(shuffle(a));return out.slice(0,n)}
+function partOf(Wk,part){const h=Math.ceil(Wk.words.length/2);return part==='a'?Wk.words.slice(0,h):part==='b'?Wk.words.slice(h):Wk.words}
+/* Turkish keyboards: the "I" key types dotless ı (and İ for capitals). Treat both as English i. */
+const normKey=k=>(k==='ı'||k==='İ')?'i':String(k).toLowerCase();
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function findWord(en){for(const x of WEEKS)for(const w of x.words)if(w.en===en)return w;return null}
+
+function carSVG(c,num,v){v=v||0;return `<svg viewBox="0 0 124 64" aria-hidden="true">${v>=2?`<rect x="10" y="25" width="4" height="8" fill="#132029"/><rect x="3" y="20" width="20" height="5" rx="2" fill="${c}" stroke="#132029" stroke-width="2.5"/>`:''}<path d="M8 44 Q8 32 22 30 L38 28 L50 13 Q54 9 62 9 L86 9 Q93 9 97 15 L106 28 Q118 30 118 40 L118 46 Q118 50 114 50 L12 50 Q8 50 8 46 Z" fill="${c}" stroke="#132029" stroke-width="3.5" stroke-linejoin="round"/>${v>=1?`<rect x="10" y="37" width="106" height="5" fill="#ffffff" opacity=".9"/>`:''}<path d="M56 15 L48 28 L74 28 L74 15 Z" fill="#cfe8ff" stroke="#132029" stroke-width="3" stroke-linejoin="round"/><path d="M80 15 L80 28 L100 28 L94 17 Q92 15 89 15 Z" fill="#cfe8ff" stroke="#132029" stroke-width="3" stroke-linejoin="round"/>${num?`<circle cx="62" cy="39" r="7.5" fill="#fff" stroke="#132029" stroke-width="2"/><text x="62" y="42.6" text-anchor="middle" font-size="${num>9?8:10}" font-family="Arial,sans-serif" font-weight="700" fill="#132029">${num}</text>`:''}<rect x="110" y="34" width="8" height="5" rx="2" fill="#ffe27a"/><circle cx="34" cy="50" r="10" fill="#132029"/><circle cx="34" cy="50" r="4" fill="#c9d1d9"/><circle cx="92" cy="50" r="10" fill="#132029"/><circle cx="92" cy="50" r="4" fill="#c9d1d9"/></svg>`}
+function dpadSVG(dir){
+ const arm={up:[38,4,24,36],down:[38,60,24,36],left:[4,38,36,24],right:[60,38,36,24]};
+ const tri={up:'50,10 42,25 58,25',down:'50,90 42,75 58,75',left:'10,50 25,42 25,58',right:'90,50 75,42 75,58'};
+ let s='<svg viewBox="0 0 100 100" aria-hidden="true">';
+ for(const k in arm){const [x,y,w,h]=arm[k],on=k===dir;s+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="${on?'#ffc93c':'#3a4452'}" stroke="#132029" stroke-width="3"/><polygon points="${tri[k]}" fill="${on?'#132029':'#7b8794'}"/>`}
+ return s+'<rect x="36" y="36" width="28" height="28" fill="#3a4452"/></svg>';
+}
+const KEEPER='<svg viewBox="0 0 52 72" aria-hidden="true"><rect x="15" y="50" width="9" height="20" rx="3" fill="#132029"/><rect x="28" y="50" width="9" height="20" rx="3" fill="#132029"/><rect x="2" y="26" width="48" height="9" rx="4.5" fill="#ff8c1a" stroke="#132029" stroke-width="2"/><rect x="12" y="22" width="28" height="32" rx="8" fill="#ff8c1a" stroke="#132029" stroke-width="2.5"/><circle cx="4" cy="30" r="5" fill="#fff" stroke="#132029" stroke-width="2"/><circle cx="48" cy="30" r="5" fill="#fff" stroke="#132029" stroke-width="2"/><circle cx="26" cy="12" r="10" fill="#f2c29b" stroke="#132029" stroke-width="2.5"/></svg>';
+function pic(p){
+ if(p.car)return `<span class="pic">${carSVG(p.car)}</span>`;
+ if(p.dpad)return `<span class="pic">${dpadSVG(p.dpad)}</span>`;
+ if(p.count)return `<span class="pic count" data-n="${p.count}">${'<i>⚽</i>'.repeat(p.count)}</span>`;
+ return `<span class="pic emo">${p.e}</span>`;
+}
+
+/* ---------- Sound ---------- */
+let voice=null;
+function pickVoice(){try{const v=speechSynthesis.getVoices();voice=v.find(x=>x.lang==='en-US'&&/female|samantha|aria|jenny|zira|google us/i.test(x.name))||v.find(x=>x.lang==='en-US')||v.find(x=>/^en/i.test(x.lang))||null}catch(e){}}
+if('speechSynthesis' in window){pickVoice();try{speechSynthesis.onvoiceschanged=pickVoice}catch(e){}}
+function say(texts){
+ if(!('speechSynthesis' in window))return;
+ try{speechSynthesis.cancel();[].concat(texts).forEach(t=>{const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=S.rate;if(voice)u.voice=voice;speechSynthesis.speak(u)})}catch(e){}
+}
+let actx=null;
+function tone(f,dur,type,vol,when){
+ if(!S.sfx)return;
+ try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.type=type||'sine';o.frequency.value=f;
+  const t0=actx.currentTime+(when||0);g.gain.setValueAtTime(vol||.15,t0);g.gain.exponentialRampToValueAtTime(.001,t0+dur);o.connect(g);g.connect(actx.destination);o.start(t0);o.stop(t0+dur+.02)}catch(e){}
+}
+const good=()=>{tone(660,.12);tone(990,.2,'sine',.15,.1)};
+const bad=()=>tone(220,.22,'triangle',.12);
+const tick=()=>tone(880,.06,'square',.04);
+const cheer=()=>[523,659,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.12,i*.09));
+/* bell: fundamental + bell-like partials with a long decay */
+function bell(f,when){
+ if(!S.sfx)return;
+ try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+  [[1,.28],[2.76,.08],[5.4,.035]].forEach(([m,v])=>{const o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=f*m;
+   const t0=actx.currentTime+when;g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(v,t0+.01);g.gain.exponentialRampToValueAtTime(.0001,t0+1.5);
+   o.connect(g);g.connect(actx.destination);o.start(t0);o.stop(t0+1.6)})}catch(e){}
+}
+const dingDong=()=>{bell(784,0);bell(587,.5)};
+function confetti(){
+ if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const box=document.createElement('div');box.className='confetti';
+ const cols=['#ffc93c','#ef4444','#3b82f6','#16a34a','#ffffff','#ff8c1a'];
+ for(let i=0;i<36;i++){const s=document.createElement('i');s.style.left=Math.random()*100+'%';s.style.background=cols[i%cols.length];
+  s.style.setProperty('--x',(Math.random()*200-100)+'px');s.style.setProperty('--r',(Math.random()*720)+'deg');s.style.animationDelay=(Math.random()*.3)+'s';box.appendChild(s)}
+ document.body.appendChild(box);setTimeout(()=>box.remove(),2000);
+}
+
+/* ---------- Player card + photo ---------- */
+const DEFAULT_PHOTO='uras-sticker.jpg';
+function stickerHTML(){
+ const own=!!S.photo;const p=own?S.ph:{x:50,y:50,z:1};
+ const empty='<label for=&quot;photo-in&quot; class=&quot;ph-empty&quot;><b>📷</b>Add photo</label>';
+ const inner=`<img src="${own?S.photo:DEFAULT_PHOTO}" alt="Uras" style="object-position:${p.x}% ${p.y}%;transform-origin:${p.x}% ${p.y}%;transform:scale(${p.z})" onerror="this.outerHTML='${empty}'">`;
+ return `<div class="sticker"><div class="ph">${inner}</div><div class="pname">URAS</div><div class="pnum">10</div></div>`;
+}
+function renderCard(){
+ const lv=lvOf(view);const td=tasksDone();const total=NW*ND*2;
+ $('#pcard').innerHTML=`${stickerHTML()}<div class="pinfo"><span class="eyebrow">Level ${lv.n} · ${lv.name}</span><b>Week ${view} / ${NW}</b><small>${lv.sub}</small><small>${td} / ${total} tasks done</small><div class="pbar"><i style="width:${Math.round(td/total*100)}%"></i></div></div>`;
+}
+$('#photo-in').addEventListener('change',e=>{
+ const f=e.target.files&&e.target.files[0];if(!f)return;
+ const rd=new FileReader();
+ rd.onload=()=>{const img=new Image();img.onload=()=>{
+  const max=720,sc=Math.min(1,max/Math.max(img.width,img.height));
+  const c=document.createElement('canvas');c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);
+  c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+  S.photo=c.toDataURL('image/jpeg',.85);S.ph=Object.assign({},DEF.ph);
+  if(!save()){S.photo=c.toDataURL('image/jpeg',.6);save()}
+  renderCard();if(!$('#sheet').hidden&&$('#photo-edit'))renderParent();
+ };img.src=rd.result};
+ rd.readAsDataURL(f);e.target.value='';
+});
+
+/* ---------- Home ---------- */
+function renderHome(){
+ $('#st-stars').textContent=S.stars;
+ $('#st-cars').textContent=completedDays()+'/'+NCARS;
+ $('#st-streak').textContent=streak();
+ renderCard();renderTypingCard();
+ const Wk=WEEKS[view-1];const lv=lvOf(view);
+
+ $('#levels').innerHTML=LEVELS.map(L=>`<div><div class="lvl-h"><b>Level ${L.n} · ${L.name}</b><span>${L.sub}</span></div><div class="weeks">${WEEKS.filter(x=>x.lv===L.n).map(x=>{
+   const open=weekOpen(x.n);const dn=PLAN.filter((_,d)=>dayComplete(x.n,d)).length;
+   return `<button class="wtab ${x.n===view?'on':''}" data-w="${x.n}" ${open?'':'disabled'}><span class="wnum">Week ${x.n}${weekComplete(x.n)?' · 🏆':''}</span><span class="wname">${open?'':'🔒 '}${esc(x.en)}</span><span class="wbar"><i style="width:${dn*20}%"></i></span></button>`}).join('')}</div></div>`).join('');
+
+ const nd=nextDay(view);const m=$('#mission');
+ const ci=Math.min(completedDays(),NCARS-1);const nc=carAt(ci);
+ const chunk=`<div class="chunk"><button class="speak" data-chunk="1" aria-label="Haftanın cümlesini dinle">🔊</button><span><small>Sentence of the week</small><b>${esc(Wk.chunk)}</b><small>${esc(Wk.chunkTr)}</small></span></div>`;
+ const head=`<p class="eyebrow">Week ${view} · ${esc(Wk.en)} (<span lang="tr">${esc(Wk.tr)}</span>)${nd>=0?` · Match ${nd+1}${nd===4?' · Final':''}`:''}</p>`;
+ if(nd===-1){
+  m.innerHTML=`<div>${head}<h1>Week complete! The cup is yours 🏆</h1><p class="meta" style="margin:12px 0">${view<NW?'Sıradaki hafta açıldı, yol haritasından seç!':'Bütün sezonu bitirdin. Şampiyonsun!'}</p>${chunk}</div>
+   <div class="reward"><p class="eyebrow">Cars in your garage</p><p class="nm">${completedDays()} / ${NCARS}</p><button class="btn small" data-act="garage">Open Garage</button></div>`;
+ }else if(waitsTomorrow(view,nd)){
+  m.innerHTML=`<div>${head}<h1>Training done for today. Great job, Uras!</h1><p class="meta" style="margin:12px 0">Beynin de dinlenmeli. Yarın ${nd+1}. maç seni bekliyor.</p>${chunk}</div>
+   <div class="reward"><p class="eyebrow">Tomorrow's prize</p>${carSVG(nc.color,ci+1,nc.v)}<p class="nm">${nc.name}</p></div>`;
+ }else{
+  const started=dayStarted(view,nd);
+  m.innerHTML=`<div>${head}<h1>${started?"Let's keep going, Uras!":"Hello Uras! Today's match is ready."}</h1>
+   <ul class="tasks">${PLAN[nd].map((s,t)=>`<li class="${S.done[tk(view,nd,t)]?'done':''}"><span class="ic">${TASKS[s.t].ic}</span><span><b>${TASKS[s.t].name}${s.hard?' (hard)':''}</b><small>${TASKS[s.t].desc}</small></span></li>`).join('')}</ul>
+   ${chunk}<div class="meta"><button class="btn" data-act="start">${started?'Continue ▶':'Kick off ▶'}</button><span>⏱ about 10 minutes</span></div></div>
+   <div class="reward"><p class="eyebrow">Finish the match, win this car</p>${carSVG(nc.color,ci+1,nc.v)}<p class="nm">${nc.name}</p></div>`;
+ }
+
+ $('#fx-title').textContent=`Week ${view} Matches · ${Wk.en}`;
+ $('#fixtures').innerHTML=PLAN.map((day,d)=>{
+  const done=dayComplete(view,d);const cur=d===nd&&!waitsTomorrow(view,d);
+  const open=!done&&!cur&&S.openAll;
+  const cls=done?'done':cur?'cur':open?'open':'lock';
+  const st=done?'Completed ✓':cur?'Up next':open?'Open':(d===nd?'Tomorrow':'Locked');
+  const btn=done?`<button class="btn small ghost" data-act="replay" data-d="${d}">Replay</button>`:(cur||open)?`<button class="btn small${open?' ghost':''}" data-act="playday" data-d="${d}">Play</button>`:`<span aria-hidden="true" style="font-size:24px">🔒</span>`;
+  return `<div class="fx ${cls}"><h3>${d===4?'Final':'Match '+(d+1)}</h3><div class="ti">${day.map(s=>`<span>${TASKS[s.t].ic} ${TASKS[s.t].name}</span>`).join('')}</div><span class="st">${st}</span>${btn}</div>`}).join('');
+
+ $('#wall').innerHTML=Wk.words.map((w,i)=>`<button class="wcard" data-say="${i}">${pic(w.p)}<b>${esc(w.en)}</b><small>${esc(w.tr)}</small>${lv.n>=2?`<em>${esc(w.ex)}</em>`:''}</button>`).join('');
+}
+
+document.addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.w){view=+b.dataset.w;renderHome();return}
+ if(b.dataset.say!==undefined){const w=WEEKS[view-1].words[+b.dataset.say];say([w.en,w.ex]);return}
+ if(b.dataset.chunk){say(WEEKS[view-1].chunk);return}
+ const a=b.dataset.act;
+ if(a==='start')startDay(view,nextDay(view),false);
+ else if(a==='replay')startDay(view,+b.dataset.d,true);
+ else if(a==='playday')startDay(view,+b.dataset.d,false);
+ else if(a==='garage')openGarage();
+ else if(a==='typing')startTyping();
+});
+$('#open-garage').onclick=openGarage;
+$('#open-parent').onclick=openGate;
+
+/* ---------- Play ---------- */
+const stage=$('#stage');
+let timers=[],clock=null,session=null;
+function later(fn,ms){const id=setTimeout(fn,ms);timers.push(id);return id}
+function setProg(i,n){$('#prog').innerHTML=Array.from({length:n},(_,k)=>`<i class="${k<i?'f':''}"></i>`).join('')}
+function showFb(w,lv){const f=$('#fb');if(!f)return;f.innerHTML=`<span><b>${esc(w.en)}</b> = ${esc(w.tr)}</span>${lv&&lv.n>=2?`<small>${esc(w.ex)}</small>`:''}`;f.classList.add('show')}
+function miss(w){S.mistakes[w.en]=(S.mistakes[w.en]||0)+1}
+function openPlay(){
+ $('#play').hidden=false;document.body.style.overflow='hidden';
+ if(!clock){let n=0;clock=setInterval(()=>{const k=today();S.secs[k]=(S.secs[k]||0)+1;if(++n%5===0)save()},1000)}
+}
+function closePlay(){
+ $('#play').hidden=true;document.body.style.overflow='';
+ timers.forEach(clearTimeout);timers=[];clearInterval(clock);clock=null;
+ if(session&&session.iv)clearInterval(session.iv);
+ try{speechSynthesis.cancel()}catch(e){}
+ session=null;typingKey=null;save();renderHome();
+}
+$('#play-close').onclick=closePlay;
+
+function startDay(w,d,replay){
+ if(d<0)return;
+ const t=replay?0:PLAN[d].findIndex((_,j)=>!S.done[tk(w,d,j)]);
+ session={w,d,replay};
+ openPlay();runTask(t);
+}
+function runTask(t){
+ const {w,d}=session;const spec=PLAN[d][t];const Wk=WEEKS[w-1];
+ session.t=t;
+ $('#play-title').textContent=`Week ${w} · ${d===4?'Final':'Match '+(d+1)} · ${TASKS[spec.t].name}`;
+ const ctx={words:partOf(Wk,spec.part),all:Wk.words,hard:!!spec.hard,lv:lvOf(w),wk:Wk};
+ GAMES[spec.t](ctx,()=>finishTask());
+}
+function finishTask(){
+ const {w,d,t,replay}=session;
+ const wasDay=dayComplete(w,d);
+ const first=!S.done[tk(w,d,t)];
+ S.done[tk(w,d,t)]=true;S.stars+=first?3:1;
+ const nowDay=dayComplete(w,d);
+ if(nowDay&&!wasDay&&!S.dayDone[dk(w,d)])S.dayDone[dk(w,d)]=today();
+ const wkDone=nowDay&&!wasDay&&weekComplete(w);
+ if(wkDone&&w<NW)S.assigned=Math.max(S.assigned,w+1);
+ save();
+ $('#st-stars').textContent=S.stars;
+ confetti();cheer();setProg(1,1);
+ const nextT=replay?(t+1<PLAN[d].length?t+1:-1):PLAN[d].findIndex((_,j)=>!S.done[tk(w,d,j)]);
+ if(nextT!==-1){
+  stage.innerHTML=`<div class="res"><div class="stars" aria-hidden="true">⭐⭐⭐</div><h2>Great job, Uras!</h2><p>+${first?3:1} ${first?'stars':'star'} · Bir görev kaldı!</p><button class="btn" id="r-next">Move Break →</button></div>`;
+  $('#r-next').onclick=()=>showBreak(()=>runTask(nextT));
+  return;
+ }
+ if(nowDay&&!wasDay){
+  const n=completedDays();const car=carAt(n-1);
+  stage.innerHTML=`<div class="res"><p class="eyebrow">Full time · <span lang="tr">bugünlük bu kadar</span></p><h2>You won a new car!</h2><div class="prize">${carSVG(car.color,n,car.v)}</div><p class="carname">${car.name}</p>${wkDone?`<p>🏆 Week ${w} Cup: Hafta ${w} kupası da senin!${w<NW?' Yeni hafta açıldı.':''}</p>`:'<p>See you tomorrow! Yarın yeni maçta görüşürüz.</p>'}<div class="row"><button class="btn" id="r-garage">Open Garage</button><button class="btn ghost" id="r-home">Home</button></div></div>`;
+  say('Great job, Uras!');
+  if(wkDone&&w<NW)view=w+1;
+  $('#r-garage').onclick=()=>{closePlay();openGarage()};
+  $('#r-home').onclick=closePlay;
+ }else{
+  stage.innerHTML=`<div class="res"><div class="stars" aria-hidden="true">⭐</div><h2>Practice complete!</h2><p>Çok iyi çalıştın.</p><button class="btn" id="r-home">Home</button></div>`;
+  $('#r-home').onclick=closePlay;
+ }
+}
+function showBreak(next){
+ const b=BREAKS[Math.floor(Math.random()*BREAKS.length)];let s=15;
+ $('#play-title').textContent='Move Break';setProg(0,1);
+ stage.innerHTML=`<div class="brk"><p class="eyebrow">Move Break · <span lang="tr">hareket molası</span></p><div class="brk-ico" aria-hidden="true">${b.ic}</div><h2>${b.en}</h2><p>${b.tr}</p><div class="ring"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" class="trk"/><circle cx="50" cy="50" r="44" class="bar" id="ringbar"/></svg><span id="sec">${s}</span></div><button class="btn" id="brk-go" disabled>I'm ready! →</button><button class="link" id="brk-skip">Skip break</button></div>`;
+ say(b.en);
+ const iv=setInterval(()=>{s--;const el=$('#sec');if(!el){clearInterval(iv);return}el.textContent=Math.max(s,0);$('#ringbar').style.strokeDashoffset=276.5*(Math.max(s,0)/15);
+  if(s<=0){clearInterval(iv);$('#brk-go').disabled=false;good()}},1000);
+ session.iv=iv;
+ const go=()=>{clearInterval(iv);next()};
+ $('#brk-go').onclick=go;$('#brk-skip').onclick=go;
+}
+
+/* ---------- Games ---------- */
+function promptFor(t,ctx){
+ const p=ctx.lv.prompt;
+ if(p==='sentence')return t.ex;
+ if(p==='find'&&!ctx.wk.noFind)return `Find the ${t.en}!`;
+ return t.en;
+}
+const GAMES={
+ listen(ctx,done){
+  const R=ctx.lv.rounds;let i=0;const order=fillTo(ctx.words,R);
+  function round(){
+   setProg(i,R);const t=order[i];const n=ctx.hard?4:ctx.lv.opts;const pr=promptFor(t,ctx);
+   const opts=shuffle([t,...sample(ctx.all.filter(w=>w!==t),n-1)]);
+   stage.innerHTML=`<div class="q"><button class="speak big" id="g-speak" aria-label="Tekrar dinle">🔊</button><p class="hint">${ctx.lv.hint}</p></div><div class="opts">${opts.map((o,k)=>`<button class="opt" data-k="${k}" aria-label="Seçenek ${k+1}">${pic(o.p)}</button>`).join('')}</div><div class="fb" id="fb"></div>`;
+   $('#g-speak').onclick=()=>say(pr);
+   later(()=>say(pr),350);
+   let locked=false;
+   stage.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    if(locked)return;const o=opts[+b.dataset.k];
+    if(o===t){locked=true;b.classList.add('ok');good();say(t.en);showFb(t,ctx.lv);later(()=>{i++;i<R?round():done()},1500)}
+    else{b.classList.add('no');bad();miss(t);later(()=>b.classList.remove('no'),450);later(()=>say(pr),500)}
+   });
+  }
+  round();
+ },
+ penalty(ctx,done){
+  const R=ctx.lv.rounds;let i=0,goals=0;const order=fillTo(ctx.words,R);
+  function round(){
+   setProg(i,R);const t=order[i];const n=ctx.hard?4:ctx.lv.opts;
+   const opts=shuffle([t,...sample(ctx.all.filter(w=>w!==t),n-1)]);
+   stage.innerHTML=`<div class="pen"><div class="goal"><div class="keeper" id="keeper">${KEEPER}</div></div><div class="spot"></div><div class="ball" id="ball">⚽</div><div class="score">GOL ${goals}</div><div class="golt" id="golt">GOL!</div></div>
+    <div class="qrow"><div class="qpic">${pic(t.p)}</div><div><p class="hint">Bu ne? Doğru kelimeyi seç!</p><button class="speak" id="g-hint">🔊 Hint</button></div></div>
+    <div class="opts">${opts.map((o,k)=>`<button class="opt word" data-k="${k}">${esc(o.en)}</button>`).join('')}</div><div class="fb" id="fb"></div>`;
+   $('#g-hint').onclick=()=>say(t.en);
+   let locked=false;
+   stage.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    if(locked)return;locked=true;const o=opts[+b.dataset.k];
+    const ball=$('#ball'),k=$('#keeper');const side=Math.random()<.5?-1:1;
+    if(o===t){
+     b.classList.add('ok');goals++;
+     ball.style.transform=`translate(calc(-50% + ${side*85}px),-150px) scale(.55)`;
+     k.style.transform=`translateX(calc(-50% + ${-side*55}px))`;
+     later(()=>{$('#golt').classList.add('on');cheer();say(t.en);showFb(t,ctx.lv)},450);
+     later(()=>{i++;i<R?round():done()},2000);
+    }else{
+     b.classList.add('no');bad();miss(t);
+     ball.style.transform=`translate(calc(-50% + ${side*60}px),-120px) scale(.65)`;
+     k.style.transform=`translateX(calc(-50% + ${side*60}px))`;
+     const f=$('#fb');f.textContent='Saved! Kaleci kurtardı, tekrar dene.';f.classList.add('show');
+     later(()=>{ball.style.transform='translate(-50%,0)';k.style.transform='translateX(-50%)';b.classList.remove('no');b.disabled=true;b.style.opacity=.35;locked=false},850);
+    }
+   });
+  }
+  round();
+ },
+ race(ctx,done){
+  const list=fillTo(ctx.words,4);const total=list.reduce((s,w)=>s+w.en.length,0);let got=0,i=0;
+  const pos=()=>`calc(${(got/total)*100}% - ${(got/total)*96}px)`;
+  function round(){
+   setProg(i,4);const t=list[i];const L=t.en.split('');let p=0;const ghost=i<ctx.lv.ghost;
+   const tiles=shuffle(L);
+   stage.innerHTML=`<div class="road"><div class="lane"></div><div class="finish"></div><div class="racer" id="racer" style="left:${pos()}">${carSVG('#ef4444',10)}</div></div>
+    <div class="qrow"><div class="qpic">${pic(t.p)}</div><div><p class="hint">Harfleri sırayla seç!${ghost?'<br>Silik harfleri takip et.':''}</p><button class="speak" id="g-hint">🔊 Listen</button></div></div>
+    <div class="slots">${L.map((c,k)=>`<span class="slot" data-k="${k}">${ghost?`<em>${esc(c)}</em>`:''}</span>`).join('')}</div>
+    <div class="tiles">${tiles.map((c,k)=>`<button class="tile" data-k="${k}">${esc(c)}</button>`).join('')}</div><div class="fb" id="fb"></div>`;
+   $('#g-hint').onclick=()=>say(t.en);later(()=>say(t.en),350);
+   stage.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{
+    if(p>=L.length||b.disabled)return;const c=tiles[+b.dataset.k];
+    if(c===L[p]){
+     const s=stage.querySelector(`.slot[data-k="${p}"]`);s.textContent=c;s.classList.add('filled');b.disabled=true;p++;got++;tick();
+     $('#racer').style.left=pos();
+     if(p===L.length){good();say(t.en);showFb(t,ctx.lv);later(()=>{i++;i<4?round():done()},1600)}
+    }else{b.classList.add('no');bad();miss(t);later(()=>b.classList.remove('no'),450)}
+   });
+  }
+  round();
+ },
+ memory(ctx,done){
+  const want=ctx.lv.pairs;
+  let ws=sample(ctx.words,Math.min(want,ctx.words.length));
+  if(ws.length<want)ws=ws.concat(sample(ctx.all.filter(w=>!ws.includes(w)),want-ws.length));
+  const cards=shuffle(ws.flatMap((w,id)=>[{id,kind:'p'},{id,kind:'w'}]));
+  let open=[],matched=0,busy=false;
+  setProg(0,ws.length);
+  stage.innerHTML=`<p class="hint center">Kartları çevir: resim ile kelimeyi eşleştir!</p><div class="mem ${ws.length>4?'many':''}">${cards.map((c,k)=>`<button class="mcard" data-k="${k}" aria-label="Kart ${k+1}"><span class="back">?</span><span class="face">${c.kind==='p'?pic(ws[c.id].p):`<b>${esc(ws[c.id].en)}</b>`}</span></button>`).join('')}</div><div class="fb" id="fb"></div>`;
+  stage.querySelectorAll('.mcard').forEach(b=>b.onclick=()=>{
+   if(busy||b.classList.contains('up'))return;const c=cards[+b.dataset.k];b.classList.add('up');tick();
+   if(c.kind==='w')say(ws[c.id].en);
+   open.push([b,c]);
+   if(open.length===2){
+    const [[b1,c1],[b2,c2]]=open;open=[];
+    if(c1.id===c2.id){b1.classList.add('match');b2.classList.add('match');matched++;good();say(ws[c1.id].en);showFb(ws[c1.id],ctx.lv);setProg(matched,ws.length);
+     if(matched===ws.length)later(done,1400)}
+    else{busy=true;later(()=>{b1.classList.remove('up');b2.classList.remove('up');busy=false},1000)}
+   }
+  });
+ }
+};
+
+/* ---------- Fill the Gap (writing) ---------- */
+function gapInfo(t){
+ const re=new RegExp('\\b('+t.en.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')(s|es)?\\b','i');
+ const m=t.ex.match(re);if(!m)return null;
+ return {before:t.ex.slice(0,m.index),after:t.ex.slice(m.index+m[1].length)};
+}
+GAMES.write=function(ctx,done){
+ const R=5;let i=0;const order=fillTo(ctx.words,R);const lvn=ctx.lv.n;
+ function round(){
+  setProg(i,R);const t=order[i];const L=t.en.split('');
+  let blanks;
+  if(lvn===1){const idx=L.map((_,k)=>k).filter(k=>k>0||L.length===1);blanks=sample(idx,Math.min(idx.length,L.length>=5?2:1))}
+  else if(lvn===2){blanks=L.map((_,k)=>k).filter(k=>k>0)}
+  else{blanks=L.map((_,k)=>k)}
+  const gi=lvn===3?gapInfo(t):null;
+  if(lvn===3&&!gi)blanks=L.map((_,k)=>k).filter(k=>k>0);
+  const boxes=L.map((c,k)=>blanks.includes(k)?`<input class="gapbox" data-k="${k}" maxlength="2" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Harf ${k+1}">`:`<span class="gapfix">${esc(c)}</span>`).join('');
+  const hint=lvn===1?'Eksik harfi yaz!':gi?'Cümledeki boşluğa kelimeyi yaz!':'Kelimenin geri kalanını yaz!';
+  const line=gi?`<p class="gapsent">${esc(gi.before)}<span class="gapword">${boxes}</span>${esc(gi.after)}</p>`:`<div class="gapword big">${boxes}</div>`;
+  stage.innerHTML=`<div class="qrow"><div class="qpic">${pic(t.p)}</div><div><p class="hint">${hint}</p><button class="speak" id="g-hint">🔊 Hint</button></div></div>${line}<div class="fb" id="fb"></div>`;
+  $('#g-hint').onclick=()=>say(t.en);
+  const inputs=[...stage.querySelectorAll('.gapbox')];
+  later(()=>{if(inputs[0])inputs[0].focus()},150);
+  let finished=false;
+  inputs.forEach(inp=>inp.addEventListener('input',()=>{
+   if(finished||inp.readOnly)return;
+   const v=normKey(inp.value.slice(-1)||'');const k=+inp.dataset.k;
+   if(!v)return;
+   if(v===L[k].toLowerCase()){
+    inp.value=L[k];inp.classList.add('ok');inp.readOnly=true;tick();
+    const next=inputs.find(x=>!x.readOnly);
+    if(next)next.focus();
+    else{finished=true;inp.blur();good();say(gi?t.ex:t.en);showFb(t,ctx.lv);later(()=>{i++;i<R?round():done()},1800)}
+   }else{inp.value='';inp.classList.remove('no');void inp.offsetWidth;inp.classList.add('no');bad();miss(t)}
+  }));
+ }
+ round();
+};
+
+/* ---------- Typing Turbo (keyboard game) ---------- */
+const TYPE_POOLS=[
+ ['cat','dog','red','car','bus','one','two','six','ten','yes','hat','arm','leg','egg','run'],
+ ['ball','blue','goal','fish','jump','book','bike','milk','nose','door','four','five','nine','pink','game','lion','bird','baby','coat','stop'],
+ ['green','seven','apple','train','robot','horse','house','water','three','black','white','bread','mouth','sunny','teddy','eight'],
+ ['orange','yellow','rabbit','monkey','father','mother','pencil','window','sister','garden','purple','school'],
+ ['red car','big ball','blue bus','my dog','go left','run fast','green apple','two goals','fast car','hello Uras'],
+ ['I like cars.','Kick the ball!','I am seven.','My car is red.','Hello, I am Uras.','Ready, set, go!','I can jump.','Open the door.']
+];
+const WPL=5;
+let typingKey=null;
+document.addEventListener('keydown',e=>{if(typingKey)typingKey(e)});
+function renderTypingCard(){
+ const t=S.typing;
+ $('#typing-card').innerHTML=`<div><p class="eyebrow">Keyboard Game · <span lang="tr">klavye oyunu</span></p><h2>Typing Turbo</h2><p class="meta">Kelimeleri yaz, her ${WPL} kelimede bir üst seviyeye çık! Ding dong! 🔔</p></div>
+  <div class="tt-badges"><span class="lvl-badge">Level ${t.level}</span><small>Best: Level ${t.best}</small></div>
+  <button class="btn" data-act="typing">Play ▶</button>`;
+}
+function startTyping(){
+ session={typing:true};openPlay();$('#play-title').textContent='Typing Turbo';
+ let level=S.typing.level,list,wi,pos,letters,totalL,doneL;
+ const typable=c=>/[a-z ]/i.test(c);
+ const skip=()=>{while(pos<letters.length&&!typable(letters[pos]))pos++};
+ const carPos=()=>{const p=totalL?doneL/totalL:0;return `calc(${p*100}% - ${p*96}px)`};
+ const pool=()=>TYPE_POOLS[Math.min(level,TYPE_POOLS.length)-1];
+ function startLevel(){list=sample(pool(),WPL);wi=0;doneL=0;totalL=list.reduce((s,w)=>s+w.split('').filter(typable).length,0);nextWord()}
+ function nextWord(){setProg(wi,WPL);const w=list[wi];pos=0;letters=w.split('');skip();render();later(()=>say(w),300)}
+ function render(){
+  const w=list[wi];const fw=findWord(w.toLowerCase());
+  stage.innerHTML=`<div class="tt-top"><span class="lvl-badge">Level ${level}</span><span class="tt-count">Word ${wi+1} / ${WPL}</span><button class="speak" id="tt-say" aria-label="Dinle">🔊 Listen</button></div>
+   <div class="road"><div class="lane"></div><div class="finish"></div><div class="racer" id="racer" style="left:${carPos()}">${carSVG('#2f6fed',level)}</div></div>
+   ${fw?`<div class="tt-pic">${pic(fw.p)}</div>`:''}
+   <div class="tt-word" id="tt-word" aria-live="polite">${letters.map((c,k)=>`<span class="${k<pos?'d':k===pos?'c':''}${c===' '?' sp':''}">${c===' '?'&nbsp;':esc(c)}</span>`).join('')}</div>
+   <p class="hint center">Klavyeden ya da aşağıdaki tuşlardan yaz.</p>
+   <div class="kb">${['qwertyuiop','asdfghjkl','zxcvbnm'].map(r=>`<div class="kb-row">${r.split('').map(ch=>`<button class="key" data-key="${ch}" tabindex="-1">${ch}</button>`).join('')}</div>`).join('')}<div class="kb-row"><button class="key space" data-key=" " tabindex="-1">space</button></div></div>`;
+  $('#tt-say').onclick=()=>say(w);
+  stage.querySelectorAll('.key').forEach(b=>b.onclick=()=>press(b.dataset.key));
+ }
+ function paint(){const sp=$('#tt-word').children;for(let k=0;k<sp.length;k++)sp[k].className=(k<pos?'d':k===pos?'c':'')+(letters[k]===' '?' sp':'');$('#racer').style.left=carPos()}
+ function press(ch){
+  if(!$('#tt-word')||pos>=letters.length)return;
+  if(normKey(ch)===normKey(letters[pos])){
+   pos++;doneL++;skip();tick();paint();
+   if(pos>=letters.length){good();say(list[wi]);wi++;if(wi>=WPL)levelUp();else later(nextWord,900)}
+  }else{bad();const c=$('#tt-word .c');if(c){c.classList.remove('x');void c.offsetWidth;c.classList.add('x')}}
+ }
+ function levelUp(){
+  level++;S.typing.level=level;S.typing.best=Math.max(S.typing.best,level);save();setProg(WPL,WPL);
+  later(()=>{dingDong();confetti();},600);
+  later(()=>{say('Level up!');
+   stage.innerHTML=`<div class="res"><div class="stars" aria-hidden="true">🔔</div><h2>Level up!</h2><p class="carname">Level ${level}</p><p>Ding dong! Bir üst seviyeye çıktın.</p><div class="row"><button class="btn" id="tt-next">Next level ▶</button><button class="btn ghost" id="tt-stop">Stop</button></div></div>`;
+   $('#tt-next').onclick=startLevel;$('#tt-stop').onclick=closePlay},1100);
+ }
+ typingKey=e=>{if(e.ctrlKey||e.metaKey||e.altKey)return;if(!$('#tt-word'))return;const k=normKey(e.key);if(k.length===1&&(k===' '||/\p{L}/u.test(k))){e.preventDefault();press(k)}};
+ startLevel();
+}
+
+/* ---------- Garage ---------- */
+function openSheet(html){$('#sheet-in').innerHTML=html;$('#sheet').hidden=false;document.body.style.overflow='hidden'}
+function closeSheet(){$('#sheet').hidden=true;document.body.style.overflow='';renderHome()}
+$('#sheet').addEventListener('click',e=>{if(e.target.id==='sheet'||e.target.closest('[data-close]'))closeSheet()});
+function openGarage(){
+ const n=completedDays();
+ openSheet(`<div class="sheet-h"><h2>Uras's Garage</h2><button class="xbtn" data-close>✕ Close</button></div>
+  <p class="hint">${n} / ${NCARS} cars collected · Her bitirdiğin maç = 1 yeni araba</p>
+  <h3>Trophy Cabinet</h3>
+  <div class="cups">${WEEKS.map(x=>`<div class="cup ${weekComplete(x.n)?'won':''}"><span>🏆</span>Week ${x.n}<br>${esc(x.en)}</div>`).join('')}</div>
+  <h3>Car Collection</h3>
+  <div class="garage">${Array.from({length:NCARS},(_,i)=>{const c=carAt(i);return i<n?`<div class="slotcar">${carSVG(c.color,i+1,c.v)}<b>${c.name}</b></div>`:`<div class="slotcar lock">${carSVG('#c7d1cb',0,c.v)}<b>Car ${i+1} · ?</b></div>`}).join('')}</div>`);
+}
+
+/* ---------- Parent ---------- */
+function openGate(){
+ const a=6+Math.floor(Math.random()*4),b=6+Math.floor(Math.random()*4);
+ openSheet(`<div class="sheet-h"><h2>Parent Login</h2><button class="xbtn" data-close>✕ Close</button></div>
+  <form id="gate" class="field" style="max-width:320px"><label for="gate-in">${a} × ${b} kaç eder?</label><input id="gate-in" inputmode="numeric" autocomplete="off"><button class="btn small" type="submit">Aç</button><p class="note" id="gate-msg"></p></form>`);
+ $('#gate').addEventListener('submit',e=>{e.preventDefault();if(+$('#gate-in').value===a*b)renderParent();else $('#gate-msg').textContent='Yanlış cevap, tekrar deneyin.'});
+ setTimeout(()=>{const i=$('#gate-in');if(i)i.focus()},50);
+}
+function renderParent(){
+ const d=new Date();let week=0;for(let k=0;k<7;k++){week+=S.secs[fmt(d)]||0;d.setDate(d.getDate()-1)}
+ const tday=Math.round((S.secs[today()]||0)/60);
+ const top=Object.entries(S.mistakes).sort((a,b)=>b[1]-a[1]).slice(0,8);
+ const cur=defaultView();
+ $('#sheet-in').innerHTML=`<div class="sheet-h"><h2>Parent Dashboard</h2><button class="xbtn" data-close>✕ Close</button></div>
+  <div class="pgrid">
+   <div class="stat"><small>Today · bugün</small><b>${tday} min</b></div>
+   <div class="stat"><small>Last 7 days · son 7 gün</small><b>${Math.round(week/60)} min</b></div>
+   <div class="stat"><small>Tasks done · biten görev</small><b>${tasksDone()} / ${NW*ND*2}</b></div>
+   <div class="stat"><small>Streak · seri</small><b>${streak()} days</b></div>
+  </div>
+
+  <div id="photo-edit"><h3>Player Card Photo</h3>
+   <div class="photo-edit">${stickerHTML()}
+    <div style="display:grid;gap:10px">
+     ${S.photo?`<label class="field" for="ph-z">Yakınlaştır<input type="range" id="ph-z" min="1" max="4" step="0.05" value="${S.ph.z}"></label>
+     <label class="field" for="ph-x">Sola / sağa<input type="range" id="ph-x" min="0" max="100" step="1" value="${S.ph.x}"></label>
+     <label class="field" for="ph-y">Yukarı / aşağı<input type="range" id="ph-y" min="0" max="100" step="1" value="${S.ph.y}"></label>`:''}
+     <div class="row" style="justify-content:flex-start"><label for="photo-in" class="btn small" style="cursor:pointer">Başka fotoğraf seç</label>${S.photo?'<button class="link" id="ph-del">Varsayılan fotoğrafa dön</button>':''}</div>
+     <p class="note">${S.photo?'Bu cihazda seçilen fotoğraf gösteriliyor. Yalnızca bu tarayıcıda saklanır, internete yüklenmez. Yüzü ortalamak için kaydırıcıları kullanın.':'Varsayılan fotoğraf gösteriliyor (uras-sticker.jpg). Başka bir fotoğraf seçerseniz yalnızca bu cihazda saklanır.'}</p>
+    </div></div></div>
+
+  <div class="pgrid">
+   <label class="field" for="p-rate">Konuşma hızı
+    <select id="p-rate"><option value="0.7" ${S.rate<=0.7?'selected':''}>Yavaş</option><option value="0.8" ${S.rate>0.7&&S.rate<0.9?'selected':''}>Orta</option><option value="0.95" ${S.rate>=0.9?'selected':''}>Normal</option></select></label>
+  </div>
+  <p class="note">12 haftanın hepsi açık. Uras yol haritasından istediği haftayı seçebilir.</p>
+  <label class="check" for="p-open"><input type="checkbox" id="p-open" ${S.openAll?'checked':''}> Tüm maçlar açık (kapatırsanız maçlar sırayla açılır)</label>
+  <label class="check" for="p-lock"><input type="checkbox" id="p-lock" ${S.lock?'checked':''}> Günde tek maç (bir sonraki maç ertesi gün açılır)</label>
+  <label class="check" for="p-sfx"><input type="checkbox" id="p-sfx" ${S.sfx?'checked':''}> Ses efektleri</label>
+
+  <div><h3>12-Week Plan · kolaydan zora</h3>
+   <div class="tablewrap"><table><thead><tr><th>Week</th><th>Topic</th><th>Curriculum · müfredat</th><th>Words</th><th>Progress</th></tr></thead><tbody>
+   ${WEEKS.map(x=>`<tr class="${x.n===cur?'cur':''}"><td>${x.n}<br><small>Level ${x.lv}</small></td><td><b>${esc(x.en)}</b> <small>(${esc(x.tr)})</small><br><small>${esc(x.chunk)}</small></td><td>${esc(x.src)}</td><td>${x.words.map(w=>esc(w.en)).join(', ')}</td><td>${PLAN.filter((_,dd)=>dayComplete(x.n,dd)).length}/5</td></tr>`).join('')}
+   </tbody></table></div>
+   <p class="note" style="margin-top:8px">Zorluk: Seviye 1'de 3 seçenek ve silik harf ipuçları var. Seviye 2'de "Find the ..." gibi kısa yönergeler gelir ve ipuçları azalır. Seviye 3'te 4 seçenek ve 6 kart çifti var. Kelime tam cümle içinde dinlenir, harf ipucu verilmez.</p></div>
+
+  <div><h3>Tricky Words · zorlandığı kelimeler</h3>
+   ${top.length?`<ul class="mlist">${top.map(([en,c])=>{const w=findWord(en);return `<li><button class="speak" data-word="${esc(en)}" aria-label="${esc(en)} dinle">🔊</button><b>${esc(en)}</b> ${w?'· '+esc(w.tr):''}<span>${c} hata</span></li>`}).join('')}</ul>`:'<p class="note">Henüz hata kaydı yok.</p>'}</div>
+
+  <div><h3>ADHD Tips · DEHB için ipuçları</h3>
+   <ul class="tips"><li>Her gün aynı saatte kısa bir oturum yapın: 1 maç yeter (yaklaşık 10 dk).</li><li>Görevler arasındaki hareket molasını atlamayın, dikkati tazeler.</li><li>Yanlış cevabın cezası yok, sadece tekrar var. Sonucu değil çabayı övün.</li><li>Haftanın cümlesini gün içinde oyunda kullanın, örneğin "Pass me the <b>blue</b> car!".</li></ul></div>
+
+  <div class="row" style="justify-content:flex-start"><button class="btn small ghost" id="p-reset">İlerlemeyi sıfırla</button><span id="p-confirm" hidden><button class="btn small danger" id="p-reset-yes">Evet, ilerlemeyi sil</button> <button class="link" id="p-reset-no">Vazgeç</button></span></div>
+  <p class="note">İlerleme bu cihazdaki tarayıcıda saklanır. Başka cihazdan açılırsa sıfırdan başlar. Sıfırlama fotoğrafı silmez.</p>`;
+ $('#p-rate').onchange=e=>{S.rate=+e.target.value;save();say('Hello Uras!')};
+ $('#p-lock').onchange=e=>{S.lock=e.target.checked;save()};
+ $('#p-open').onchange=e=>{S.openAll=e.target.checked;save()};
+ $('#p-sfx').onchange=e=>{S.sfx=e.target.checked;save()};
+ ['z','x','y'].forEach(k=>{const el=$('#ph-'+k);if(el)el.oninput=()=>{S.ph[k]=+el.value;const img=$('#photo-edit .ph img');
+  if(img){img.style.objectPosition=`${S.ph.x}% ${S.ph.y}%`;img.style.transformOrigin=`${S.ph.x}% ${S.ph.y}%`;img.style.transform=`scale(${S.ph.z})`}save()}});
+ const del=$('#ph-del');if(del)del.onclick=()=>{S.photo=null;save();renderParent()};
+ $('#sheet-in').querySelectorAll('[data-word]').forEach(b=>b.onclick=()=>say(b.dataset.word));
+ $('#p-reset').onclick=()=>{$('#p-confirm').hidden=false};
+ $('#p-reset-no').onclick=()=>{$('#p-confirm').hidden=true};
+ $('#p-reset-yes').onclick=()=>{S=Object.assign({},DEF,{done:{},dayDone:{},mistakes:{},secs:{},photo:S.photo,ph:S.ph,rate:S.rate,sfx:S.sfx,typing:{level:1,best:1}});view=1;save();renderParent()};
+}
+
+renderHome();
+})();
+</script>
